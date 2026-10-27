@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#83c9f4">
+  <meta name="description" content="A sky-inspired weather data analysis dashboard.">
+  <title>SkyScope — Weather Data Analysis</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <div class="sky-glow glow-one"></div><div class="sky-glow glow-two"></div>
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="SkyScope home"><span class="brand-mark">☀</span><span>Sky<span class="brand-light">Scope</span><small>WEATHER INTELLIGENCE</small></span></a>
+    <div class="topbar-right"><span class="live-dot"></span><span id="statusText">Dashboard ready</span><span class="top-date" id="todayLabel"></span></div>
+  </header>
+
+  <main class="page">
+    <section class="intro-row">
+      <div><p class="eyebrow">YOUR LITTLE WINDOW TO THE SKY</p><h1>Weather, <span>beautifully</span> understood.</h1><p class="subtitle">Explore today's atmosphere and discover what the next few days have in store.</p></div>
+      <div class="floating-weather" aria-hidden="true"><span class="float-sun">☀️</span><span class="float-cloud">☁️</span><span class="float-spark">✦</span></div>
+    </section>
+
+    <form class="searchbar" id="searchForm">
+      <span class="search-icon">⌕</span><input id="cityInput" type="text" value="Hyderabad" maxlength="100" placeholder="Search a city, e.g. Hyderabad" aria-label="City name">
+      <button type="submit"><span>Explore weather</span><span aria-hidden="true"> ↗</span></button>
+    </form>
+    <div class="notice" id="notice" role="status" hidden></div>
+
+    <section class="dashboard-grid">
+      <article class="hero-card glass">
+        <div class="hero-card-top"><span class="pill"><span class="live-dot"></span> CURRENT CONDITIONS</span><span class="mini-label" id="updatedAt">Updating…</span></div>
+        <div class="current-main">
+          <div><p class="location" id="locationName">Hyderabad, IN</p><p class="weather-desc" id="description">Partly cloudy</p><div class="temperature"><span id="temperature">28</span><sup>°C</sup></div><p class="feels">Feels like <strong id="feelsLike">30°C</strong></p></div>
+          <div class="hero-weather-icon" id="currentIcon" aria-label="Weather icon">⛅</div>
+        </div>
+        <div class="hi-lo"><span>↗ High <strong id="highTemp">31°</strong></span><span>↘ Low <strong id="lowTemp">24°</strong></span><span class="sunset">☼ Golden hour is calling</span></div>
+        <div class="hero-bottom"><span>☀ Sunrise <strong id="sunrise">06:12</strong></span><span>🌇 Sunset <strong id="sunset">18:24</strong></span><span id="dataMode">DEMO DATA</span></div>
+      </article>
+
+      <article class="side-card glass">
+        <div class="section-heading"><div><p class="eyebrow">ATMOSPHERE CHECK</p><h2>Today's details</h2></div><span class="heading-icon">✧</span></div>
+        <div class="metric-list">
+          <div class="metric"><span class="metric-icon humidity">💧</span><div class="metric-copy"><span>Humidity</span><strong id="humidity">64%</strong></div><div class="metric-track"><i id="humidityBar" style="width:64%"></i></div></div>
+          <div class="metric"><span class="metric-icon wind">〰️</span><div class="metric-copy"><span>Wind speed</span><strong id="wind">12 km/h</strong></div><div class="metric-track"><i id="windBar" style="width:30%"></i></div></div>
+          <div class="metric"><span class="metric-icon pressure">◉</span><div class="metric-copy"><span>Pressure</span><strong id="pressure">1012 hPa</strong></div><div class="metric-track"><i id="pressureBar" style="width:68%"></i></div></div>
+          <div class="metric"><span class="metric-icon visibility">👁️</span><div class="metric-copy"><span>Visibility</span><strong id="visibility">10 km</strong></div><div class="metric-track"><i id="visibilityBar" style="width:100%"></i></div></div>
+        </div>
+        <div class="sky-note"><span>🌤️</span><p><strong>A little sky wisdom</strong><br><small>Look up, take a breath, and enjoy the day.</small></p></div>
+      </article>
+    </section>
+
+    <section class="section-block">
+      <div class="section-heading section-heading-wide"><div><p class="eyebrow">THE DAYS AHEAD</p><h2>Five-day forecast <span class="heading-spark">✳</span></h2></div><p class="section-caption">A quick peek at the weather ahead</p></div>
+      <div class="forecast-grid" id="forecastGrid" aria-live="polite"></div>
+    </section>
+
+    <section class="analysis-grid">
+      <article class="chart-card glass">
+        <div class="section-heading"><div><p class="eyebrow">TEMPERATURE TRENDS</p><h2>A week in degrees</h2></div><span class="chart-unit">°C</span></div>
+        <div class="chart-wrap"><canvas id="temperatureChart" aria-label="Temperature forecast line chart"></canvas></div>
+        <p class="chart-footnote"><span class="legend-dot"></span> Forecast temperature <span class="footnote-right">Daily outlook</span></p>
+      </article>
+      <article class="chart-card glass range-card">
+        <div class="section-heading"><div><p class="eyebrow">DAILY RANGE</p><h2>Highs & lows</h2></div><span class="chart-unit">°C</span></div>
+        <div class="chart-wrap"><canvas id="rangeChart" aria-label="Daily high and low bar chart"></canvas></div>
+        <div class="range-legend"><span><i class="legend-high"></i> High</span><span><i class="legend-low"></i> Low</span></div>
+      </article>
+    </section>
+
+    <section class="section-block table-section">
+      <div class="section-heading section-heading-wide"><div><p class="eyebrow">THE DATA, AT A GLANCE</p><h2>Forecast details <span class="heading-spark">⌁</span></h2></div><span class="table-count" id="tableCount">5 DAYS</span></div>
+      <div class="table-shell glass"><table><thead><tr><th>DAY</th><th>CONDITIONS</th><th>TEMP</th><th>HIGH / LOW</th><th>HUMIDITY</th><th>WIND</th></tr></thead><tbody id="forecastTable"></tbody></table></div>
+    </section>
+
+    <footer><div class="footer-brand">☀ SkyScope</div><p>Made for curious minds and cloud watchers everywhere.</p><p class="footer-small">Live data via OpenWeather · Demo mode uses illustrative sample values</p></footer>
+  </main>
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
